@@ -30,6 +30,11 @@
             android:label="Sign Up"
             android:parentActivityName=".LoginActivity"
             android:screenOrientation="portrait" />
+        <activity
+            android:name=".OrderActivity"
+            android:label="Order"
+            android:parentActivityName=".MainActivity"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

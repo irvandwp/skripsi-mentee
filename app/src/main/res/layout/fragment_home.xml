@@ -4,10 +4,16 @@
     android:layout_height="match_parent"
     tools:context="com.irvandwiputra.skripsimentee.Fragment.HomeFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="Hello home fragment" />
+        android:layout_height="match_parent">
+
+        <Button
+            android:id="@+id/buttonOrder"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Order" />
+
+    </LinearLayout>
 
 </FrameLayout>
