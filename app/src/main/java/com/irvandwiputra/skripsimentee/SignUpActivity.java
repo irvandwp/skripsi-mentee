@@ -1,5 +1,7 @@
 package com.irvandwiputra.skripsimentee;
 
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -84,7 +86,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
         RequestBody body = RequestBody.create(CONSTANTS.MEDIA_TYPE_MARKDOWN, gson.toJson(user));
 
         Request request = new Request.Builder()
-                .url(CONSTANTS.NEW_USER)
+                .url(CONSTANTS.URL_NEW_USER)
                 .post(body)
                 .addHeader("Content-Type", "application/json")
                 .build();
@@ -102,11 +104,19 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            dialogLoading.dismiss();
+                            dialogLoading.hide();
 
-                            AlertDialog.Builder builderSuccess = new AlertDialog.Builder(getApplicationContext());
+                            AlertDialog.Builder builderSuccess = new AlertDialog.Builder(SignUpActivity.this);
                             builderSuccess.setMessage("Successfully create new account");
-                            final AlertDialog dialogSuccess = builderSuccess.create();
+                            builderSuccess.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    Intent intent = new Intent(SignUpActivity.this, LoginActivity.class);
+                                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                    startActivity(intent);
+                                }
+                            });
+                            AlertDialog dialogSuccess = builderSuccess.create();
                             dialogSuccess.show();
                         }
                     });

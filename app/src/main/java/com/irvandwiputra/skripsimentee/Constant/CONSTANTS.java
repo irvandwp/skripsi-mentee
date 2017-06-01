@@ -14,7 +14,8 @@ public class CONSTANTS {
     public static final String ROLE_MENTOR = "mentor";
     public static final String ROLE_MENTEE = "mentee";
 
-    public static final String BASE_URL = "http://192.168.1.100:8888/skripsi/";
-    public static final String NEW_USER = BASE_URL + "api/users/new";
+    public static final String BASE_URL = "http://192.168.0.103:8888/skripsi/";
+    public static final String URL_NEW_USER = BASE_URL + "api/users/new";
+    public static final String URL_LOGIN = BASE_URL + "api/users/login";
 
 }

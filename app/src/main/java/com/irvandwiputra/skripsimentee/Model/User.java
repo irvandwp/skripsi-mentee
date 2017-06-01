@@ -14,6 +14,8 @@ public class User {
     private String role;
     private String occupation;
 
+    public User() {
+    }
 
     public User(String email, String name, String password, String phone, String address, String role, String occupation) {
         this.email = email;
