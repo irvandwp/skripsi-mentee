@@ -136,7 +136,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             public void run() {
                                 progressDialog.hide();
                                 AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this)
-                                        .setTitle(responseStatus.getCode())
                                         .setMessage(responseStatus.getMessage())
                                         .setPositiveButton("OK", null);
                                 AlertDialog alertDialog = builder.create();
