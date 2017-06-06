@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/SkripsiMentee.iml" filepath="$PROJECT_DIR$/SkripsiMentee.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/skripsi-mentee.iml" filepath="$PROJECT_DIR$/skripsi-mentee.iml" />
     </modules>
   </component>
 </project>

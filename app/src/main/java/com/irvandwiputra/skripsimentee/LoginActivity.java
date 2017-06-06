@@ -1,7 +1,9 @@
 package com.irvandwiputra.skripsimentee;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -12,6 +14,8 @@ import android.widget.ProgressBar;
 
 import com.google.gson.Gson;
 import com.irvandwiputra.skripsimentee.Constant.CONSTANTS;
+import com.irvandwiputra.skripsimentee.Model.ResponseStatus;
+import com.irvandwiputra.skripsimentee.Model.Token;
 import com.irvandwiputra.skripsimentee.Model.User;
 
 import java.io.IOException;
@@ -97,10 +101,16 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             }
 
             @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                if (response.isSuccessful()) {
-                    if (response.code() == 200) {
-                        Log.i(TAG, "onResponse: " + response.code());
+            public void onResponse(Call call, final Response response) throws IOException {
+                try {
+                    String responseApi = response.body().string();
+                    if (response.isSuccessful()) {
+                        Log.i(TAG, "onResponse: success to sign in");
+                        Token token = Token.parseJSON(responseApi);
+                        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                        SharedPreferences.Editor editor = preferences.edit();
+                        editor.putString(CONSTANTS.TOKEN, token.getToken());
+                        editor.apply();
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
@@ -109,21 +119,26 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                 startActivity(intent);
                             }
                         });
+                    } else {
+                        Log.i(TAG, "onFailure: failed to sign in");
+                        final ResponseStatus responseStatus = ResponseStatus.parseJSON(responseApi);
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                hideProgressBar();
+                                AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this)
+                                        .setTitle(responseStatus.getCode())
+                                        .setMessage(responseStatus.getMessage())
+                                        .setPositiveButton("OK", null);
+                                AlertDialog alertDialog = builder.create();
+                                alertDialog.show();
+                            }
+                        });
                     }
-                } else {
-                    Log.i(TAG, "onFailure: failed to sign in");
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            hideProgressBar();
-                            AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this)
-                                    .setTitle("Error")
-                                    .setMessage("Please enter the correct credentials")
-                                    .setPositiveButton("OK", null);
-                            AlertDialog alertDialog = builder.create();
-                            alertDialog.show();
-                        }
-                    });
+                } catch (Exception e) {
+                    e.printStackTrace();
+                } finally {
+                    response.close();
                 }
             }
         });
