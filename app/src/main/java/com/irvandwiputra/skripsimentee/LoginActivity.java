@@ -1,5 +1,6 @@
 package com.irvandwiputra.skripsimentee;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
@@ -8,7 +9,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ProgressBar;
 
 import com.irvandwiputra.skripsimentee.Model.ResponseStatus;
 import com.irvandwiputra.skripsimentee.Model.Token;
@@ -42,9 +42,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     @Bind(R.id.textLoginPassword)
     EditText textLoginPassword;
 
-    @Bind(R.id.pbSignIn)
-    ProgressBar pbSignIn;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,13 +61,31 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 startActivity(intent);
                 break;
             case R.id.buttonSignIn:
-                DoSignIn();
+                validateSignIn();
                 break;
         }
     }
 
+    private void validateSignIn() {
+        String email = textLoginEmail.getText().toString().trim();
+        String password = textLoginPassword.getText().toString().trim();
+
+        if (email.isEmpty() || password.isEmpty()) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this)
+                    .setMessage("Please fill out all of the required field")
+                    .setPositiveButton("OK", null);
+            AlertDialog alertDialog = builder.create();
+            alertDialog.show();
+        } else {
+            DoSignIn();
+        }
+    }
+
     private void DoSignIn() {
-        showProgressBar();
+
+        final ProgressDialog progressDialog = new ProgressDialog(this, ProgressDialog.STYLE_SPINNER);
+        progressDialog.setMessage("Loading...");
+        progressDialog.show();
 
         User user = new User();
         user.setEmail(textLoginEmail.getText().toString().trim());
@@ -119,7 +134,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                hideProgressBar();
+                                progressDialog.hide();
                                 AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this)
                                         .setTitle(responseStatus.getCode())
                                         .setMessage(responseStatus.getMessage())
@@ -139,19 +154,4 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     }
 
-    private void showProgressBar() {
-        textLoginEmail.setVisibility(View.INVISIBLE);
-        textLoginPassword.setVisibility(View.INVISIBLE);
-        buttonSignIn.setVisibility(View.INVISIBLE);
-        buttonSignUp.setVisibility(View.INVISIBLE);
-        pbSignIn.setVisibility(View.VISIBLE);
-    }
-
-    private void hideProgressBar() {
-        textLoginEmail.setVisibility(View.VISIBLE);
-        textLoginPassword.setVisibility(View.VISIBLE);
-        buttonSignIn.setVisibility(View.VISIBLE);
-        buttonSignUp.setVisibility(View.VISIBLE);
-        pbSignIn.setVisibility(View.INVISIBLE);
-    }
 }
