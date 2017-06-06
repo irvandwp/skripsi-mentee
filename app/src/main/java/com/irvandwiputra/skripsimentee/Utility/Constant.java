@@ -1,4 +1,4 @@
-package com.irvandwiputra.skripsimentee.Constant;
+package com.irvandwiputra.skripsimentee.Utility;
 
 import okhttp3.MediaType;
 
@@ -6,7 +6,7 @@ import okhttp3.MediaType;
  * Created by Irvan Dwi Putra on 6/1/2017.
  */
 
-public class CONSTANTS {
+public class Constant {
 
     public static final MediaType MEDIA_TYPE_MARKDOWN
             = MediaType.parse("text/x-markdown; charset=utf-8");
@@ -16,7 +16,7 @@ public class CONSTANTS {
 
     public static final String TOKEN = "TOKEN";
 
-    public static final String BASE_URL = "http://192.168.30.55:8888/skripsi/";
+    private static final String BASE_URL = "http://192.168.100.10:8888/skripsi/";
     public static final String URL_NEW_USER = BASE_URL + "api/users/new";
     public static final String URL_LOGIN = BASE_URL + "api/users/login";
 

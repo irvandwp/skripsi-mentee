@@ -10,7 +10,7 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.google.gson.Gson;
-import com.irvandwiputra.skripsimentee.Constant.CONSTANTS;
+import com.irvandwiputra.skripsimentee.Utility.Constant;
 import com.irvandwiputra.skripsimentee.Model.User;
 
 import java.io.IOException;
@@ -77,16 +77,16 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
                 textPassword.getText().toString().trim(),
                 textPhoneNo.getText().toString().trim(),
                 textAddress.getText().toString().trim(),
-                CONSTANTS.ROLE_MENTEE,
+                Constant.ROLE_MENTEE,
                 textOccupation.getText().toString().trim());
         Gson gson = new Gson();
 
         OkHttpClient client = new OkHttpClient();
 
-        RequestBody body = RequestBody.create(CONSTANTS.MEDIA_TYPE_MARKDOWN, gson.toJson(user));
+        RequestBody body = RequestBody.create(Constant.MEDIA_TYPE_MARKDOWN, gson.toJson(user));
 
         Request request = new Request.Builder()
-                .url(CONSTANTS.URL_NEW_USER)
+                .url(Constant.URL_NEW_USER)
                 .post(body)
                 .addHeader("Content-Type", "application/json")
                 .build();

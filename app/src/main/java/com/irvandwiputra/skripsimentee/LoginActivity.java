@@ -1,9 +1,7 @@
 package com.irvandwiputra.skripsimentee;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -12,11 +10,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 
-import com.google.gson.Gson;
-import com.irvandwiputra.skripsimentee.Constant.CONSTANTS;
 import com.irvandwiputra.skripsimentee.Model.ResponseStatus;
 import com.irvandwiputra.skripsimentee.Model.Token;
 import com.irvandwiputra.skripsimentee.Model.User;
+import com.irvandwiputra.skripsimentee.Utility.Constant;
+import com.irvandwiputra.skripsimentee.Utility.TinyDB;
 
 import java.io.IOException;
 
@@ -26,7 +24,6 @@ import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
-import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
@@ -78,19 +75,16 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         User user = new User();
         user.setEmail(textLoginEmail.getText().toString().trim());
         user.setPassword(textLoginPassword.getText().toString().trim());
-        user.setRole(CONSTANTS.ROLE_MENTEE);
+        user.setRole(Constant.ROLE_MENTEE);
 
-        Gson gson = new Gson();
         OkHttpClient client = new OkHttpClient();
 
-        RequestBody requestBody = RequestBody.create(CONSTANTS.MEDIA_TYPE_MARKDOWN, gson.toJson(user));
-
-        Log.i(TAG, "DoSignIn: " + gson.toJson(user));
+        Log.i(TAG, "DoSignIn: " + User.createJSON(user));
 
         Request request = new Request.Builder()
-                .url(CONSTANTS.URL_LOGIN)
+                .url(Constant.URL_LOGIN)
                 .addHeader("Content-Type", "application/json")
-                .post(requestBody)
+                .post(User.createJSONRequest(user))
                 .build();
 
         Call call = client.newCall(request);
@@ -107,10 +101,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     if (response.isSuccessful()) {
                         Log.i(TAG, "onResponse: success to sign in");
                         Token token = Token.parseJSON(responseApi);
-                        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-                        SharedPreferences.Editor editor = preferences.edit();
-                        editor.putString(CONSTANTS.TOKEN, token.getToken());
-                        editor.apply();
+
+                        TinyDB tinyDB = new TinyDB(getApplicationContext());
+                        tinyDB.putString(Constant.TOKEN, token.getToken());
+
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {

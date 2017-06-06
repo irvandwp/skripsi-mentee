@@ -10,11 +10,14 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 
 import com.irvandwiputra.skripsimentee.Fragment.HistoryFragment;
 import com.irvandwiputra.skripsimentee.Fragment.HomeFragment;
 import com.irvandwiputra.skripsimentee.Fragment.MyAccountFragment;
+import com.irvandwiputra.skripsimentee.Utility.Constant;
+import com.irvandwiputra.skripsimentee.Utility.TinyDB;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -50,6 +53,10 @@ public class MainActivity extends AppCompatActivity
 
         navigationView.setNavigationItemSelectedListener(this);
 
+        TinyDB tinyDB = new TinyDB(getApplicationContext());
+
+        Log.i(TAG, "onCreate: " + tinyDB.getString(Constant.TOKEN));
+
         fragmentManager.beginTransaction().replace(R.id.content_fragment, new HomeFragment()).commit();
     }
 
@@ -64,6 +71,8 @@ public class MainActivity extends AppCompatActivity
                     .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
+                            TinyDB tinyDB = new TinyDB(getApplicationContext());
+                            tinyDB.clear();
                             finish();
                         }
                     })

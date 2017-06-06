@@ -1,5 +1,10 @@
 package com.irvandwiputra.skripsimentee.Model;
 
+import com.google.gson.Gson;
+import com.irvandwiputra.skripsimentee.Utility.Constant;
+
+import okhttp3.RequestBody;
+
 /**
  * Created by Irvan Dwi Putra on 6/1/2017.
  */
@@ -81,6 +86,16 @@ public class User {
 
     public void setOccupation(String occupation) {
         this.occupation = occupation;
+    }
+
+    public static RequestBody createJSONRequest(User user) {
+        Gson gson = new Gson();
+        return RequestBody.create(Constant.MEDIA_TYPE_MARKDOWN, gson.toJson(user));
+    }
+
+    public static String createJSON(User user) {
+        Gson gson = new Gson();
+        return gson.toJson(user);
     }
 
 }
