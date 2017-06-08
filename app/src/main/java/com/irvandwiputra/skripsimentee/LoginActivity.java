@@ -3,10 +3,16 @@ package com.irvandwiputra.skripsimentee;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Editable;
+import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Log;
+import android.util.Patterns;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 
@@ -14,10 +20,8 @@ import com.irvandwiputra.skripsimentee.Model.ResponseStatus;
 import com.irvandwiputra.skripsimentee.Model.Token;
 import com.irvandwiputra.skripsimentee.Model.User;
 import com.irvandwiputra.skripsimentee.Utility.Constant;
-import com.irvandwiputra.skripsimentee.Utility.TinyDB;
 
 import java.io.IOException;
-import java.util.regex.Matcher;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -37,8 +41,14 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     @Bind(R.id.buttonSignIn)
     Button buttonSignIn;
 
+    @Bind(R.id.emailTxtInputLayout)
+    public TextInputLayout emailTxtInputLayout;
+
     @Bind(R.id.textLoginEmail)
     EditText textLoginEmail;
+
+    @Bind(R.id.passwordTxtInputLayout)
+    public TextInputLayout passwordTxtInputLayout;
 
     @Bind(R.id.textLoginPassword)
     EditText textLoginPassword;
@@ -49,10 +59,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
 
+        textLoginEmail.addTextChangedListener(new MyTextWatcher(textLoginEmail));
+        textLoginPassword.addTextChangedListener(new MyTextWatcher(textLoginPassword));
         buttonSignUp.setOnClickListener(this);
         buttonSignIn.setOnClickListener(this);
     }
-
 
     @Override
     public void onClick(View v) {
@@ -68,30 +79,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
     private void validateSignIn() {
-        String email = textLoginEmail.getText().toString().trim();
-        String password = textLoginPassword.getText().toString().trim();
-        Matcher matcher = Constant.VALID_EMAIL_ADDRESS_REGEX.matcher(email);
-
-        if (email.isEmpty() || password.isEmpty()) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this)
-                    .setMessage("Please fill out all of the required field")
-                    .setPositiveButton("OK", null);
-            AlertDialog alertDialog = builder.create();
-            alertDialog.show();
-        } else if (!matcher.find()) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this)
-                    .setMessage("Please enter a valid email address")
-                    .setPositiveButton("OK", null);
-            AlertDialog alertDialog = builder.create();
-            alertDialog.show();
-        } else {
-            DoSignIn();
-
-        }
+        if (!validateEmail()) return;
+        if (!validatePassword()) return;
+        DoSignIn();
     }
 
     private void DoSignIn() {
-
         final ProgressDialog progressDialog = new ProgressDialog(this, ProgressDialog.STYLE_SPINNER);
         progressDialog.setMessage("Loading...");
         progressDialog.show();
@@ -125,14 +118,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     if (response.isSuccessful()) {
                         Log.i(TAG, "onResponse: success to sign in");
                         Token token = Token.parseJSON(responseApi);
-
-                        TinyDB tinyDB = new TinyDB(getApplicationContext());
-                        tinyDB.putString(Constant.TOKEN, token.getToken());
-
+                        Constant.setToken(getApplicationContext(), token.getToken());
+                        progressDialog.dismiss();
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                progressDialog.dismiss();
                                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                                 startActivity(intent);
@@ -160,7 +150,76 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 }
             }
         });
+    }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+    }
+
+    private boolean validateEmail() {
+        String email = textLoginEmail.getText().toString().trim();
+
+        if (email.isEmpty() || !isValidEmail(email)) {
+            emailTxtInputLayout.setError("Please enter your email address");
+            requestFocus(textLoginEmail);
+            return false;
+        } else {
+            emailTxtInputLayout.setErrorEnabled(false);
+        }
+        return true;
+    }
+
+    private boolean validatePassword() {
+        if (textLoginPassword.getText().toString().trim().isEmpty()) {
+            passwordTxtInputLayout.setError("Please enter your password");
+            requestFocus(textLoginPassword);
+            return false;
+        } else {
+            passwordTxtInputLayout.setErrorEnabled(false);
+        }
+
+        return true;
+    }
+
+    private static boolean isValidEmail(String email) {
+        return !TextUtils.isEmpty(email) && Patterns.EMAIL_ADDRESS.matcher(email).matches();
+    }
+
+    private void requestFocus(View view) {
+        if (view.requestFocus()) {
+            getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+        }
+    }
+
+    private class MyTextWatcher implements TextWatcher {
+
+        private View view;
+
+        MyTextWatcher(View view) {
+            this.view = view;
+        }
+
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+            switch (view.getId()) {
+                case R.id.textLoginEmail:
+                    break;
+                case R.id.textLoginPassword:
+                    break;
+            }
+        }
     }
 
 }
