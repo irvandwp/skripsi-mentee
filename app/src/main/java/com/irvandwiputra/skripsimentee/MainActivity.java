@@ -66,7 +66,6 @@ public class MainActivity extends AppCompatActivity
             drawer.closeDrawer(GravityCompat.START);
         } else {
             AlertDialog.Builder builder = new AlertDialog.Builder(this)
-                    .setTitle("Sure")
                     .setMessage("Are you sure you want to sign out?")
                     .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                         @Override

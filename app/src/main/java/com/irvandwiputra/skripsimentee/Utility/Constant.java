@@ -1,5 +1,7 @@
 package com.irvandwiputra.skripsimentee.Utility;
 
+import android.content.Context;
+
 import java.util.regex.Pattern;
 
 import okhttp3.MediaType;
@@ -24,5 +26,16 @@ public class Constant {
     private static final String BASE_URL = "http://192.168.0.101:8888/skripsi/";
     public static final String URL_NEW_USER = BASE_URL + "api/users/new";
     public static final String URL_LOGIN = BASE_URL + "api/users/login";
+    public static final String URL_NEW_ORDER = BASE_URL + "api/orders/new";
+
+    public static String getToken(Context context) {
+        TinyDB tinyDB = new TinyDB(context);
+        return tinyDB.getString(TOKEN);
+    }
+
+    public static void setToken(Context context, String token) {
+        TinyDB tinyDB = new TinyDB(context);
+        tinyDB.putString(TOKEN, token);
+    }
 
 }
