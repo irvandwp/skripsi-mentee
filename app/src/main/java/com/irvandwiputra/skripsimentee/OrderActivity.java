@@ -1,6 +1,7 @@
 package com.irvandwiputra.skripsimentee;
 
 import android.app.ProgressDialog;
+import android.app.TimePickerDialog;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -8,12 +9,14 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TimePicker;
 
 import com.irvandwiputra.skripsimentee.Model.Order;
 import com.irvandwiputra.skripsimentee.Model.ResponseStatus;
 import com.irvandwiputra.skripsimentee.Utility.Constant;
 
 import java.io.IOException;
+import java.util.Calendar;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -26,6 +29,7 @@ import okhttp3.Response;
 public class OrderActivity extends AppCompatActivity implements View.OnClickListener {
 
     public static final String TAG = OrderActivity.class.getSimpleName();
+    private int hour, minute;
 
     @Bind(R.id.textLatitude)
     public EditText textLatitude;
@@ -55,6 +59,7 @@ public class OrderActivity extends AppCompatActivity implements View.OnClickList
         ButterKnife.bind(this);
 
         buttonCreate.setOnClickListener(this);
+        textStartTime.setOnClickListener(this);
     }
 
 
@@ -64,7 +69,23 @@ public class OrderActivity extends AppCompatActivity implements View.OnClickList
             case R.id.buttonCreate:
                 DoCreateOrder();
                 break;
+            case R.id.textStartTime:
+                OpenTimePicker();
+                break;
         }
+    }
+
+    private void OpenTimePicker() {
+        final Calendar calendar = Calendar.getInstance();
+        hour = calendar.get(Calendar.HOUR);
+        minute = calendar.get(Calendar.MINUTE);
+        TimePickerDialog timePickerDialog = new TimePickerDialog(this, new TimePickerDialog.OnTimeSetListener() {
+            @Override
+            public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                textStartTime.setText(hourOfDay + ":" + minute);
+            }
+        }, hour, minute, true);
+        timePickerDialog.show();
     }
 
     public void validateCreateOrder() {
@@ -93,6 +114,8 @@ public class OrderActivity extends AppCompatActivity implements View.OnClickList
                 .post(Order.createJSONRequest(order))
                 .build();
         Call call = okHttpClient.newCall(request);
+
+        Log.i(TAG, "DoCreateOrder: " + Order.createJSON(order));
 
         call.enqueue(new Callback() {
             @Override
