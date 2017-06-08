@@ -7,15 +7,20 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TimePicker;
 
+import com.irvandwiputra.skripsimentee.Model.Course;
 import com.irvandwiputra.skripsimentee.Model.Order;
 import com.irvandwiputra.skripsimentee.Model.ResponseStatus;
 import com.irvandwiputra.skripsimentee.Utility.Constant;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Calendar;
 
 import butterknife.Bind;
@@ -26,10 +31,12 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-public class OrderActivity extends AppCompatActivity implements View.OnClickListener {
+public class OrderActivity extends AppCompatActivity implements View.OnClickListener, TimePickerDialog.OnTimeSetListener, Spinner.OnItemSelectedListener {
 
     public static final String TAG = OrderActivity.class.getSimpleName();
-    private int hour, minute;
+    public ArrayList<String> stringArrayList = new ArrayList<>();
+    public Course[] courses;
+    public int courseId;
 
     @Bind(R.id.textLatitude)
     public EditText textLatitude;
@@ -52,16 +59,60 @@ public class OrderActivity extends AppCompatActivity implements View.OnClickList
     @Bind(R.id.buttonCreate)
     public Button buttonCreate;
 
+    @Bind(R.id.spinnerCourse)
+    public Spinner spinnerCourse;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_order);
         ButterKnife.bind(this);
 
+        initializeCourseList();
+
         buttonCreate.setOnClickListener(this);
         textStartTime.setOnClickListener(this);
     }
 
+    private void initializeCourseList() {
+        OkHttpClient okHttpClient = new OkHttpClient();
+
+        Request request = new Request.Builder()
+                .url(Constant.URL_COURSE)
+                .build();
+
+        Call call = okHttpClient.newCall(request);
+
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                try {
+                    String responseApi = response.body().string();
+                    if (response.isSuccessful()) {
+                        courses = Course.parseJSONArray(responseApi);
+                        for (Course course : courses) {
+                            stringArrayList.add(course.getName());
+                        }
+                        spinnerCourse.setAdapter(new ArrayAdapter<String>(OrderActivity.this, android.R.layout.simple_spinner_dropdown_item, stringArrayList));
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                } finally {
+                    response.close();
+                }
+            }
+        });
+
+    }
+
+    public String getCourseName(int position) {
+        return courses[position].getName();
+    }
 
     @Override
     public void onClick(View v) {
@@ -77,14 +128,9 @@ public class OrderActivity extends AppCompatActivity implements View.OnClickList
 
     private void OpenTimePicker() {
         final Calendar calendar = Calendar.getInstance();
-        hour = calendar.get(Calendar.HOUR);
-        minute = calendar.get(Calendar.MINUTE);
-        TimePickerDialog timePickerDialog = new TimePickerDialog(this, new TimePickerDialog.OnTimeSetListener() {
-            @Override
-            public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                textStartTime.setText(hourOfDay + ":" + minute);
-            }
-        }, hour, minute, true);
+        int hour = calendar.get(Calendar.HOUR);
+        int minute = calendar.get(Calendar.MINUTE);
+        TimePickerDialog timePickerDialog = new TimePickerDialog(this, this, hour, minute, true);
         timePickerDialog.show();
     }
 
@@ -146,6 +192,26 @@ public class OrderActivity extends AppCompatActivity implements View.OnClickList
                 }
             }
         });
+
+    }
+
+    @Override
+    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+        textStartTime.setText(hourOfDay + ":" + minute);
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        String name = getCourseName(position);
+        for (Course course : courses) {
+            if (course.getName().equals(name)) {
+                courseId = course.getId();
+            }
+        }
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
 
     }
 }

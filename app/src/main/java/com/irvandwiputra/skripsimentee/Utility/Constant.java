@@ -27,6 +27,7 @@ public class Constant {
     public static final String URL_NEW_USER = BASE_URL + "api/users/new";
     public static final String URL_LOGIN = BASE_URL + "api/users/login";
     public static final String URL_NEW_ORDER = BASE_URL + "api/orders/new";
+    public static final String URL_COURSE = BASE_URL + "api/orders";
 
     public static String getToken(Context context) {
         TinyDB tinyDB = new TinyDB(context);

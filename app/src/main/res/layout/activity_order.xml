@@ -13,6 +13,11 @@
         tools:layout_editor_absoluteX="8dp"
         tools:layout_editor_absoluteY="0dp">
 
+        <android.support.v7.widget.AppCompatSpinner
+            android:id="@+id/spinnerCourse"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
         <EditText
             android:id="@+id/textLatitude"
             android:layout_width="match_parent"
