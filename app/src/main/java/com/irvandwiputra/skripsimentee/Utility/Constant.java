@@ -21,7 +21,7 @@ public class Constant {
 
     public static final String TOKEN = "TOKEN";
 
-    private static final String BASE_URL = "http://192.168.100.10:8888/skripsi/";
+    private static final String BASE_URL = "http://192.168.0.101:8888/skripsi/";
     public static final String URL_NEW_USER = BASE_URL + "api/users/new";
     public static final String URL_LOGIN = BASE_URL + "api/users/login";
 

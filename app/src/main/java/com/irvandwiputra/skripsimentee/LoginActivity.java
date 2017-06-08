@@ -17,6 +17,7 @@ import com.irvandwiputra.skripsimentee.Utility.Constant;
 import com.irvandwiputra.skripsimentee.Utility.TinyDB;
 
 import java.io.IOException;
+import java.util.regex.Matcher;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -69,6 +70,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private void validateSignIn() {
         String email = textLoginEmail.getText().toString().trim();
         String password = textLoginPassword.getText().toString().trim();
+        Matcher matcher = Constant.VALID_EMAIL_ADDRESS_REGEX.matcher(email);
 
         if (email.isEmpty() || password.isEmpty()) {
             AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this)
@@ -76,8 +78,15 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     .setPositiveButton("OK", null);
             AlertDialog alertDialog = builder.create();
             alertDialog.show();
+        } else if (!matcher.find()) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this)
+                    .setMessage("Please enter a valid email address")
+                    .setPositiveButton("OK", null);
+            AlertDialog alertDialog = builder.create();
+            alertDialog.show();
         } else {
             DoSignIn();
+
         }
     }
 
