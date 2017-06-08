@@ -14,6 +14,7 @@ import com.irvandwiputra.skripsimentee.Utility.Constant;
 import com.irvandwiputra.skripsimentee.Model.User;
 
 import java.io.IOException;
+import java.util.regex.Matcher;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -61,8 +62,34 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.buttonSubmit:
-                SignUp();
+                validateSignUp();
                 break;
+        }
+    }
+
+    public void validateSignUp() {
+        String email = textEMail.getText().toString().trim();
+        String name = textName.getText().toString().trim();
+        String password = textPassword.getText().toString().trim();
+        String phoneNo = textPhoneNo.getText().toString().trim();
+        String address = textAddress.getText().toString().trim();
+        String occupation = textOccupation.getText().toString().trim();
+        Matcher matcher = Constant.VALID_EMAIL_ADDRESS_REGEX.matcher(email);
+
+        if (email.isEmpty() || name.isEmpty() || password.isEmpty() || phoneNo.isEmpty() || address.isEmpty() || occupation.isEmpty()) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this)
+                    .setMessage("Please fill out all of the required field")
+                    .setPositiveButton("OK", null);
+            AlertDialog alertDialog = builder.create();
+            alertDialog.show();
+        } else if (!matcher.find()) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this)
+                    .setMessage("Please enter the correct email address")
+                    .setPositiveButton("OK", null);
+            AlertDialog alertDialog = builder.create();
+            alertDialog.show();
+        } else {
+            SignUp();
         }
     }
 
