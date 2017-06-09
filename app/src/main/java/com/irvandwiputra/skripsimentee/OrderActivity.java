@@ -31,7 +31,8 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-public class OrderActivity extends AppCompatActivity implements View.OnClickListener, TimePickerDialog.OnTimeSetListener, Spinner.OnItemSelectedListener {
+public class OrderActivity extends AppCompatActivity
+        implements View.OnClickListener, TimePickerDialog.OnTimeSetListener, Spinner.OnItemSelectedListener, View.OnFocusChangeListener {
 
     public static final String TAG = OrderActivity.class.getSimpleName();
     public ArrayList<String> stringArrayList = new ArrayList<>();
@@ -43,9 +44,6 @@ public class OrderActivity extends AppCompatActivity implements View.OnClickList
 
     @Bind(R.id.textLongitude)
     public EditText textLongitude;
-
-    @Bind(R.id.textCourseId)
-    public EditText textCourseId;
 
     @Bind(R.id.textStartTime)
     public EditText textStartTime;
@@ -71,7 +69,7 @@ public class OrderActivity extends AppCompatActivity implements View.OnClickList
         initializeCourseList();
 
         buttonCreate.setOnClickListener(this);
-        textStartTime.setOnClickListener(this);
+        textStartTime.setOnFocusChangeListener(this);
     }
 
     private void initializeCourseList() {
@@ -93,12 +91,19 @@ public class OrderActivity extends AppCompatActivity implements View.OnClickList
             public void onResponse(Call call, Response response) throws IOException {
                 try {
                     String responseApi = response.body().string();
+                    Log.i(TAG, "onResponse: " + responseApi);
                     if (response.isSuccessful()) {
                         courses = Course.parseJSONArray(responseApi);
+                        stringArrayList.add("-- Select course --");
                         for (Course course : courses) {
                             stringArrayList.add(course.getName());
                         }
-                        spinnerCourse.setAdapter(new ArrayAdapter<String>(OrderActivity.this, android.R.layout.simple_spinner_dropdown_item, stringArrayList));
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                spinnerCourse.setAdapter(new ArrayAdapter<String>(OrderActivity.this, android.R.layout.simple_spinner_dropdown_item, stringArrayList));
+                            }
+                        });
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -119,9 +124,6 @@ public class OrderActivity extends AppCompatActivity implements View.OnClickList
         switch (v.getId()) {
             case R.id.buttonCreate:
                 DoCreateOrder();
-                break;
-            case R.id.textStartTime:
-                OpenTimePicker();
                 break;
         }
     }
@@ -145,7 +147,7 @@ public class OrderActivity extends AppCompatActivity implements View.OnClickList
         progressDialog.show();
 
         Order order = new Order();
-        order.setCourse_id(Integer.parseInt(textCourseId.getText().toString().trim()));
+        order.setCourse_id(courseId);
         order.setOrder_description(textDescription.getText().toString().trim());
         order.setDuration(Integer.parseInt(textDuration.getText().toString().trim()));
         order.setPrice(100000);
@@ -206,6 +208,8 @@ public class OrderActivity extends AppCompatActivity implements View.OnClickList
         for (Course course : courses) {
             if (course.getName().equals(name)) {
                 courseId = course.getId();
+            } else {
+                courseId = 0;
             }
         }
     }
@@ -213,5 +217,14 @@ public class OrderActivity extends AppCompatActivity implements View.OnClickList
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
 
+    }
+
+    @Override
+    public void onFocusChange(View v, boolean hasFocus) {
+        switch (v.getId()) {
+            case R.id.textStartTime:
+                if (hasFocus) OpenTimePicker();
+                break;
+        }
     }
 }

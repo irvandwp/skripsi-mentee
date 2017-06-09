@@ -79,8 +79,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
     private void validateSignIn() {
-        if (!validateEmail()) return;
-        if (!validatePassword()) return;
+        if (!validateEmail() || !validatePassword()) return;
         DoSignIn();
     }
 
