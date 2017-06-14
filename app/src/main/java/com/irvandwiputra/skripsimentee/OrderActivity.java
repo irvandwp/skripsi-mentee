@@ -81,7 +81,7 @@ public class OrderActivity extends AppCompatActivity
 
     private void initializeGoogleMap() {
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
+                .findFragmentById(R.id.orderMap);
         mapFragment.getMapAsync(this);
     }
 
