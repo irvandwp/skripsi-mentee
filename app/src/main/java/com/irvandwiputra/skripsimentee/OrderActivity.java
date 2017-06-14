@@ -14,6 +14,12 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TimePicker;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.irvandwiputra.skripsimentee.Model.Course;
 import com.irvandwiputra.skripsimentee.Model.Order;
 import com.irvandwiputra.skripsimentee.Model.ResponseStatus;
@@ -33,7 +39,7 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 public class OrderActivity extends AppCompatActivity
-        implements View.OnClickListener, TimePickerDialog.OnTimeSetListener, Spinner.OnItemSelectedListener, View.OnFocusChangeListener {
+        implements View.OnClickListener, TimePickerDialog.OnTimeSetListener, Spinner.OnItemSelectedListener, View.OnFocusChangeListener, OnMapReadyCallback {
 
     public static final String TAG = OrderActivity.class.getSimpleName();
     public ArrayList<String> stringArrayList = new ArrayList<>();
@@ -57,6 +63,8 @@ public class OrderActivity extends AppCompatActivity
     @Bind(R.id.spinnerCourse)
     public Spinner spinnerCourse;
 
+    public GoogleMap googleMap;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,9 +73,16 @@ public class OrderActivity extends AppCompatActivity
 
         initializeCourseList();
         initializeGPSCoordinate();
+        initializeGoogleMap();
 
         buttonCreate.setOnClickListener(this);
         textStartTime.setOnFocusChangeListener(this);
+    }
+
+    private void initializeGoogleMap() {
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.map);
+        mapFragment.getMapAsync(this);
     }
 
     private void initializeGPSCoordinate() {
@@ -235,5 +250,12 @@ public class OrderActivity extends AppCompatActivity
                 if (hasFocus) OpenTimePicker();
                 break;
         }
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        LatLng menteeLocation = new LatLng(latitude, longitude);
+        googleMap.addMarker(new MarkerOptions().position(menteeLocation).title("Your current location"));
+        googleMap.moveCamera(CameraUpdateFactory.newLatLng(menteeLocation));
     }
 }

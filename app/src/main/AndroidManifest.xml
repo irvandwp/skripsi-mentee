@@ -37,6 +37,10 @@
             android:label="Order"
             android:parentActivityName=".MainActivity"
             android:screenOrientation="portrait" />
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyC1KhEO3HhyTPf3yV6CYe8dGMZQvBbNFXY" />
     </application>
 
 </manifest>
