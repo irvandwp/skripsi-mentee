@@ -18,20 +18,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
-        <EditText
-            android:id="@+id/textLatitude"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Latitude"
-            android:inputType="numberDecimal" />
-
-        <EditText
-            android:id="@+id/textLongitude"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Longitude"
-            android:inputType="numberDecimal" />
-
         <android.support.design.widget.TextInputLayout
             android:id="@+id/startTimeTxtInputLayout"
             android:layout_width="match_parent"

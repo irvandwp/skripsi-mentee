@@ -18,6 +18,7 @@ import com.irvandwiputra.skripsimentee.Model.Course;
 import com.irvandwiputra.skripsimentee.Model.Order;
 import com.irvandwiputra.skripsimentee.Model.ResponseStatus;
 import com.irvandwiputra.skripsimentee.Utility.Constant;
+import com.irvandwiputra.skripsimentee.Utility.LocationService;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -38,12 +39,8 @@ public class OrderActivity extends AppCompatActivity
     public ArrayList<String> stringArrayList = new ArrayList<>();
     public Course[] courses;
     public int courseId;
-
-    @Bind(R.id.textLatitude)
-    public EditText textLatitude;
-
-    @Bind(R.id.textLongitude)
-    public EditText textLongitude;
+    private double latitude;
+    private double longitude;
 
     @Bind(R.id.textStartTime)
     public EditText textStartTime;
@@ -67,9 +64,21 @@ public class OrderActivity extends AppCompatActivity
         ButterKnife.bind(this);
 
         initializeCourseList();
+        initializeGPSCoordinate();
 
         buttonCreate.setOnClickListener(this);
         textStartTime.setOnFocusChangeListener(this);
+    }
+
+    private void initializeGPSCoordinate() {
+        LocationService locationService = new LocationService(OrderActivity.this);
+        if (locationService.isCanGetLocation()) {
+            latitude = locationService.getLatitude();
+            longitude = locationService.getLongitude();
+        } else {
+            locationService.showSettingsAlert();
+        }
+
     }
 
     private void initializeCourseList() {
@@ -151,8 +160,8 @@ public class OrderActivity extends AppCompatActivity
         order.setOrder_description(textDescription.getText().toString().trim());
         order.setDuration(Integer.parseInt(textDuration.getText().toString().trim()));
         order.setPrice(100000);
-        order.setLatitude(Float.parseFloat(textLatitude.getText().toString().trim()));
-        order.setLongitude(Float.parseFloat(textLongitude.getText().toString().trim()));
+        order.setLatitude(latitude);
+        order.setLongitude(longitude);
         order.setToken(Constant.getToken(getApplicationContext()));
 
         OkHttpClient okHttpClient = new OkHttpClient();

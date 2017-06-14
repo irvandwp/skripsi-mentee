@@ -23,13 +23,13 @@ public class Order {
     private String status;
     private int duration;
     private int price;
-    private float latitude;
-    private float longitude;
+    private double latitude;
+    private double longitude;
 
     public Order() {
     }
 
-    public Order(String token, int id, String order_no, int total_price, int course_id, String order_description, String mentee_id, String mentor_id, String status, int duration, int price, float latitude, float longitude) {
+    public Order(String token, int id, String order_no, int total_price, int course_id, String order_description, String mentee_id, String mentor_id, String status, int duration, int price, double latitude, double longitude) {
         this.token = token;
         this.id = id;
         this.order_no = order_no;
@@ -53,19 +53,19 @@ public class Order {
         this.token = token;
     }
 
-    public float getLatitude() {
+    public double getLatitude() {
         return latitude;
     }
 
-    public void setLatitude(float latitude) {
+    public void setLatitude(double latitude) {
         this.latitude = latitude;
     }
 
-    public float getLongitude() {
+    public double getLongitude() {
         return longitude;
     }
 
-    public void setLongitude(float longitude) {
+    public void setLongitude(double longitude) {
         this.longitude = longitude;
     }
 
