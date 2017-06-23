@@ -1,8 +1,16 @@
 package com.irvandwiputra.skripsimentee;
 
+import android.Manifest;
 import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.Settings;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -14,17 +22,20 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TimePicker;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.irvandwiputra.skripsimentee.Model.Course;
 import com.irvandwiputra.skripsimentee.Model.Order;
 import com.irvandwiputra.skripsimentee.Model.ResponseStatus;
 import com.irvandwiputra.skripsimentee.Utility.Constant;
-import com.irvandwiputra.skripsimentee.Utility.LocationService;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -47,6 +58,8 @@ public class OrderActivity extends AppCompatActivity
     public int courseId;
     private double latitude;
     private double longitude;
+    private FusedLocationProviderClient mFusedLocationClient;
+    protected Location mLastLocation;
 
     @Bind(R.id.textStartTime)
     public EditText textStartTime;
@@ -72,28 +85,69 @@ public class OrderActivity extends AppCompatActivity
         ButterKnife.bind(this);
 
         initializeCourseList();
-        initializeGPSCoordinate();
-        initializeGoogleMap();
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
         buttonCreate.setOnClickListener(this);
         textStartTime.setOnFocusChangeListener(this);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (!checkPermissions()) {
+            requestPermissions();
+        } else {
+            getLastLocation();
+        }
+    }
+
+    @SuppressWarnings("MissingPermission")
+    private void getLastLocation() {
+        mFusedLocationClient.getLastLocation()
+                .addOnCompleteListener(this, new OnCompleteListener<Location>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Location> task) {
+                        if (task.isSuccessful() && task.getResult() != null) {
+                            mLastLocation = task.getResult();
+                            latitude = mLastLocation.getLatitude();
+                            longitude = mLastLocation.getLongitude();
+                            initializeGoogleMap();
+                            Log.i(TAG, "onComplete: " + mLastLocation.getLatitude() + ", " + mLastLocation.getLongitude());
+                        } else {
+                            Log.w(TAG, "getLastLocationException", task.getException());
+                        }
+                    }
+                });
+    }
+
+    private void startLocationPermissionRequest() {
+        ActivityCompat.requestPermissions(OrderActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, Constant.REQUEST_PERMISSION_REQUEST_CODE);
+    }
+
+    private void requestPermissions() {
+        boolean shouldProvideRationale = ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION);
+        if (shouldProvideRationale) {
+            Log.i(TAG, "Displaying permission rationale to provide additional context.");
+            startLocationPermissionRequest();
+        } else {
+            Log.i(TAG, "Requesting permission");
+            startLocationPermissionRequest();
+        }
+    }
+
+    /**
+     * Return the current state of the permissions needed.
+     */
+    private boolean checkPermissions() {
+        int permissionState = ActivityCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_COARSE_LOCATION);
+        return permissionState == PackageManager.PERMISSION_GRANTED;
     }
 
     private void initializeGoogleMap() {
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.orderMap);
         mapFragment.getMapAsync(this);
-    }
-
-    private void initializeGPSCoordinate() {
-        LocationService locationService = new LocationService(OrderActivity.this);
-        if (locationService.isCanGetLocation()) {
-            latitude = locationService.getLatitude();
-            longitude = locationService.getLongitude();
-        } else {
-            locationService.showSettingsAlert();
-        }
-
     }
 
     private void initializeCourseList() {
@@ -256,6 +310,26 @@ public class OrderActivity extends AppCompatActivity
     public void onMapReady(GoogleMap googleMap) {
         LatLng menteeLocation = new LatLng(latitude, longitude);
         googleMap.addMarker(new MarkerOptions().position(menteeLocation).title("Your current location"));
-        googleMap.moveCamera(CameraUpdateFactory.newLatLng(menteeLocation));
+        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(menteeLocation, 16f));
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        Log.i(TAG, "onRequestPermissionsResult: entering result code");
+        if (requestCode == Constant.REQUEST_PERMISSION_REQUEST_CODE) {
+            if (grantResults.length <= 0) {
+                Log.i(TAG, "User interaction was cancelled");
+            } else if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                getLastLocation();
+            } else {
+                Intent intent = new Intent();
+                intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                Uri uri = Uri.fromParts("package", BuildConfig.APPLICATION_ID, null);
+                intent.setData(uri);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+            }
+        }
     }
 }
