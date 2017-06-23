@@ -22,6 +22,8 @@ public class Constant {
     public static final String ROLE_MENTEE = "mentee";
 
     public static final String TOKEN = "TOKEN";
+    public static final String EMAIL = "EMAIL";
+    public static final String NAME = "NAME";
 
     private static final String BASE_URL = "http://192.168.30.62:8888/skripsi/";
     public static final String URL_NEW_USER = BASE_URL + "api/users/new";
@@ -40,5 +42,26 @@ public class Constant {
         TinyDB tinyDB = new TinyDB(context);
         tinyDB.putString(TOKEN, token);
     }
+
+    public static String getEmail(Context context) {
+        TinyDB tinyDB = new TinyDB(context);
+        return tinyDB.getString(EMAIL);
+    }
+
+    public static void setEmail(Context context, String email) {
+        TinyDB tinyDB = new TinyDB(context);
+        tinyDB.putString(EMAIL, email);
+    }
+
+    public static String getName(Context context) {
+        TinyDB tinyDB = new TinyDB(context);
+        return tinyDB.getString(NAME);
+    }
+
+    public static void setName(Context context, String name) {
+        TinyDB tinyDB = new TinyDB(context);
+        tinyDB.putString(NAME, name);
+    }
+
 
 }

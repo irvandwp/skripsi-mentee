@@ -117,7 +117,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     if (response.isSuccessful()) {
                         Log.i(TAG, "onResponse: success to sign in");
                         Token token = Token.parseJSON(responseApi);
+                        User responseUser = User.parseJSON(responseApi);
                         Constant.setToken(getApplicationContext(), token.getToken());
+                        Constant.setEmail(getApplicationContext(), responseUser.getEmail());
+                        Constant.setName(getApplicationContext(), responseUser.getName());
                         progressDialog.dismiss();
                         runOnUiThread(new Runnable() {
                             @Override

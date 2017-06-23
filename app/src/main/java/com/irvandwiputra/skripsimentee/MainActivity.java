@@ -12,6 +12,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 
 import com.irvandwiputra.skripsimentee.Fragment.HistoryFragment;
 import com.irvandwiputra.skripsimentee.Fragment.HomeFragment;
@@ -37,6 +39,9 @@ public class MainActivity extends AppCompatActivity
     @Bind(R.id.nav_view)
     NavigationView navigationView;
 
+    public TextView textEmail;
+    public TextView textName;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,8 +51,7 @@ public class MainActivity extends AppCompatActivity
 
         setSupportActionBar(toolbar);
 
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
@@ -56,6 +60,14 @@ public class MainActivity extends AppCompatActivity
         TinyDB tinyDB = new TinyDB(getApplicationContext());
 
         Log.i(TAG, "onCreate: " + tinyDB.getString(Constant.TOKEN));
+        Log.i(TAG, "onCreate: " + tinyDB.getString(Constant.NAME));
+        Log.i(TAG, "onCreate: " + tinyDB.getString(Constant.EMAIL));
+
+        View view = navigationView.getHeaderView(0);
+        textEmail = (TextView) view.findViewById(R.id.navHeaderEmail);
+        textName = (TextView) view.findViewById(R.id.navHeaderName);
+        textEmail.setText(tinyDB.getString(Constant.EMAIL));
+        textName.setText(tinyDB.getString(Constant.NAME));
 
         fragmentManager.beginTransaction().replace(R.id.content_fragment, new HomeFragment()).commit();
     }

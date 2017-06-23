@@ -1,6 +1,7 @@
 package com.irvandwiputra.skripsimentee.Model;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.irvandwiputra.skripsimentee.Utility.Constant;
 
 import okhttp3.RequestBody;
@@ -96,6 +97,11 @@ public class User {
     public static String createJSON(User user) {
         Gson gson = new Gson();
         return gson.toJson(user);
+    }
+
+    public static User parseJSON(String JSON) {
+        Gson gson = new GsonBuilder().create();
+        return gson.fromJson(JSON, User.class);
     }
 
 }
