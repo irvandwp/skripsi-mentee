@@ -3,6 +3,7 @@ package com.irvandwiputra.skripsimentee;
 import android.Manifest;
 import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -10,11 +11,13 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
+import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -36,6 +39,7 @@ import com.irvandwiputra.skripsimentee.Model.Course;
 import com.irvandwiputra.skripsimentee.Model.Order;
 import com.irvandwiputra.skripsimentee.Model.ResponseStatus;
 import com.irvandwiputra.skripsimentee.Utility.Constant;
+import com.irvandwiputra.skripsimentee.Utility.TextWatcher;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -60,6 +64,7 @@ public class OrderActivity extends AppCompatActivity
     private double longitude;
     private FusedLocationProviderClient mFusedLocationClient;
     protected Location mLastLocation;
+    public GoogleMap googleMap;
 
     @Bind(R.id.textStartTime)
     public EditText textStartTime;
@@ -76,7 +81,14 @@ public class OrderActivity extends AppCompatActivity
     @Bind(R.id.spinnerCourse)
     public Spinner spinnerCourse;
 
-    public GoogleMap googleMap;
+    @Bind(R.id.descriptionTxtInputLayout)
+    public TextInputLayout descriptionInputLayout;
+
+    @Bind(R.id.durationTxtInputLayout)
+    public TextInputLayout durationInputLayout;
+
+    @Bind(R.id.startTimeTxtInputLayout)
+    public TextInputLayout startTimeInputLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,6 +98,10 @@ public class OrderActivity extends AppCompatActivity
 
         initializeCourseList();
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+
+        textDescription.addTextChangedListener(new TextWatcher(textDescription));
+        textStartTime.addTextChangedListener(new TextWatcher(textStartTime));
+        textDuration.addTextChangedListener(new TextWatcher(textDuration));
 
         buttonCreate.setOnClickListener(this);
         textStartTime.setOnFocusChangeListener(this);
@@ -201,7 +217,7 @@ public class OrderActivity extends AppCompatActivity
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.buttonCreate:
-                DoCreateOrder();
+                validateCreateOrder();
                 break;
         }
     }
@@ -214,8 +230,61 @@ public class OrderActivity extends AppCompatActivity
         timePickerDialog.show();
     }
 
-    public void validateCreateOrder() {
+    private void requestFocus(View view) {
+        if (view.requestFocus()) {
+            getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+        }
+    }
 
+    private boolean validateDescription() {
+        if (textDescription.getText().toString().trim().isEmpty()) {
+            descriptionInputLayout.setError("This field is required");
+            requestFocus(textDescription);
+            return false;
+        } else {
+            descriptionInputLayout.setErrorEnabled(false);
+        }
+        return true;
+    }
+
+    private boolean validateDuration() {
+        String duration = textDuration.getText().toString().trim();
+        int durationNumber = Integer.parseInt(duration);
+        if (duration.isEmpty()) {
+            durationInputLayout.setError("This field is required");
+            requestFocus(textDuration);
+            return false;
+        } else if (durationNumber < 1 || durationNumber > 4) {
+            durationInputLayout.setError("Please enter a number from 1 until 4");
+            requestFocus(textDuration);
+            return false;
+        } else {
+            durationInputLayout.setErrorEnabled(false);
+        }
+        return true;
+    }
+
+    private boolean validateStartTime() {
+        if (textStartTime.getText().toString().trim().isEmpty()) {
+            startTimeInputLayout.setError("This field is required");
+            requestFocus(textStartTime);
+            return false;
+        } else {
+            startTimeInputLayout.setErrorEnabled(false);
+        }
+        return true;
+    }
+
+    public void validateCreateOrder() {
+        if (!validateDescription() || !validateStartTime() || !validateDuration()) return;
+        if (courseId == 0) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this)
+                    .setMessage("Please select course")
+                    .setPositiveButton("OK", null);
+            AlertDialog alertDialog = builder.create();
+            alertDialog.show();
+        }
+        DoCreateOrder();
     }
 
     public void DoCreateOrder() {
@@ -260,7 +329,14 @@ public class OrderActivity extends AppCompatActivity
                             progressDialog.hide();
                             AlertDialog.Builder builder = new AlertDialog.Builder(getApplicationContext())
                                     .setMessage(responseStatus.getMessage())
-                                    .setPositiveButton("OK", null);
+                                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            Intent intent = new Intent(OrderActivity.this, MainActivity.class);
+                                            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                            startActivity(intent);
+                                        }
+                                    });
                             AlertDialog alertDialog = builder.create();
                             alertDialog.show();
                         }
