@@ -57,17 +57,15 @@ public class MainActivity extends AppCompatActivity
 
         navigationView.setNavigationItemSelectedListener(this);
 
-        TinyDB tinyDB = new TinyDB(getApplicationContext());
-
-        Log.i(TAG, "onCreate: " + tinyDB.getString(Constant.TOKEN));
-        Log.i(TAG, "onCreate: " + tinyDB.getString(Constant.NAME));
-        Log.i(TAG, "onCreate: " + tinyDB.getString(Constant.EMAIL));
+        Log.i(TAG, "onCreate: " + Constant.getToken(this));
+        Log.i(TAG, "onCreate: " + Constant.getEmail(this));
+        Log.i(TAG, "onCreate: " + Constant.getName(this));
 
         View view = navigationView.getHeaderView(0);
         textEmail = (TextView) view.findViewById(R.id.navHeaderEmail);
         textName = (TextView) view.findViewById(R.id.navHeaderName);
-        textEmail.setText(tinyDB.getString(Constant.EMAIL));
-        textName.setText(tinyDB.getString(Constant.NAME));
+        textEmail.setText(Constant.getEmail(this));
+        textName.setText(Constant.getName(this));
 
         fragmentManager.beginTransaction().replace(R.id.content_fragment, new HomeFragment()).commit();
     }

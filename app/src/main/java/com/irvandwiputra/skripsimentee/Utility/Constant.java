@@ -25,7 +25,7 @@ public class Constant {
     public static final String EMAIL = "EMAIL";
     public static final String NAME = "NAME";
 
-    private static final String BASE_URL = "http://192.168.30.62:8888/skripsi/";
+    private static final String BASE_URL = "http://192.168.100.3:8888/skripsi/";
     public static final String URL_NEW_USER = BASE_URL + "api/users/new";
     public static final String URL_LOGIN = BASE_URL + "api/users/login";
     public static final String URL_NEW_ORDER = BASE_URL + "api/orders/new";
