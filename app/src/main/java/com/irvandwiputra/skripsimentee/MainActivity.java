@@ -15,6 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import com.irvandwiputra.skripsimentee.Fragment.HelpFragment;
 import com.irvandwiputra.skripsimentee.Fragment.HistoryFragment;
 import com.irvandwiputra.skripsimentee.Fragment.HomeFragment;
 import com.irvandwiputra.skripsimentee.Fragment.MyAccountFragment;
@@ -102,6 +103,7 @@ public class MainActivity extends AppCompatActivity
                 fragmentManager.beginTransaction().replace(R.id.content_fragment, new HistoryFragment()).commit();
                 break;
             case R.id.nav_help:
+                fragmentManager.beginTransaction().replace(R.id.content_fragment, new HelpFragment()).commit();
                 break;
             case R.id.nav_my_account:
                 fragmentManager.beginTransaction().replace(R.id.content_fragment, new MyAccountFragment()).commit();
