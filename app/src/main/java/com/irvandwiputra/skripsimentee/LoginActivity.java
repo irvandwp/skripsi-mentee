@@ -6,11 +6,7 @@ import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.text.Editable;
-import android.text.TextUtils;
-import android.text.TextWatcher;
 import android.util.Log;
-import android.util.Patterns;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -20,6 +16,7 @@ import com.irvandwiputra.skripsimentee.Model.ResponseStatus;
 import com.irvandwiputra.skripsimentee.Model.Token;
 import com.irvandwiputra.skripsimentee.Model.User;
 import com.irvandwiputra.skripsimentee.Utility.Constant;
+import com.irvandwiputra.skripsimentee.Utility.TextWatcher;
 
 import java.io.IOException;
 
@@ -34,24 +31,19 @@ import okhttp3.Response;
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 
     public static final String TAG = LoginActivity.class.getSimpleName();
-
+    public ProgressDialog progressDialog;
     @Bind(R.id.buttonSignUp)
-    Button buttonSignUp;
-
+    public Button buttonSignUp;
     @Bind(R.id.buttonSignIn)
-    Button buttonSignIn;
-
+    public Button buttonSignIn;
     @Bind(R.id.emailTxtInputLayout)
     public TextInputLayout emailTxtInputLayout;
-
     @Bind(R.id.textLoginEmail)
-    EditText textLoginEmail;
-
+    public EditText textLoginEmail;
     @Bind(R.id.passwordTxtInputLayout)
     public TextInputLayout passwordTxtInputLayout;
-
     @Bind(R.id.textLoginPassword)
-    EditText textLoginPassword;
+    public EditText textLoginPassword;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,10 +51,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
 
-        textLoginEmail.addTextChangedListener(new MyTextWatcher(textLoginEmail));
-        textLoginPassword.addTextChangedListener(new MyTextWatcher(textLoginPassword));
+        textLoginEmail.addTextChangedListener(new TextWatcher(textLoginEmail));
+        textLoginPassword.addTextChangedListener(new TextWatcher(textLoginPassword));
         buttonSignUp.setOnClickListener(this);
         buttonSignIn.setOnClickListener(this);
+
+        progressDialog = new ProgressDialog(this, ProgressDialog.STYLE_SPINNER);
+        progressDialog.setMessage("Loading...");
     }
 
     @Override
@@ -84,8 +79,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
     private void DoSignIn() {
-        final ProgressDialog progressDialog = new ProgressDialog(this, ProgressDialog.STYLE_SPINNER);
-        progressDialog.setMessage("Loading...");
         progressDialog.show();
 
         User user = new User();
@@ -114,8 +107,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             public void onResponse(Call call, final Response response) throws IOException {
                 try {
                     String responseApi = response.body().string();
+                    Log.i(TAG, "onResponse: status code " + response.code());
                     if (response.isSuccessful()) {
-                        Log.i(TAG, "onResponse: success to sign in");
                         Token token = Token.parseJSON(responseApi);
                         User responseUser = User.parseJSON(responseApi);
                         Constant.setToken(getApplicationContext(), token.getToken());
@@ -131,12 +124,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             }
                         });
                     } else {
-                        Log.i(TAG, "onFailure: failed to sign in");
                         final ResponseStatus responseStatus = ResponseStatus.parseJSON(responseApi);
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                progressDialog.hide();
+                                progressDialog.dismiss();
                                 AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this)
                                         .setMessage(responseStatus.getMessage())
                                         .setPositiveButton("OK", null);
@@ -154,17 +146,15 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         });
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-
-    }
-
     private boolean validateEmail() {
         String email = textLoginEmail.getText().toString().trim();
 
-        if (email.isEmpty() || !isValidEmail(email)) {
+        if (email.isEmpty()) {
             emailTxtInputLayout.setError("Please enter your email address");
+            requestFocus(textLoginEmail);
+            return false;
+        } else if (!Constant.isValidEmail(email)) {
+            emailTxtInputLayout.setError("Please enter a valid email address");
             requestFocus(textLoginEmail);
             return false;
         } else {
@@ -185,43 +175,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         return true;
     }
 
-    private static boolean isValidEmail(String email) {
-        return !TextUtils.isEmpty(email) && Patterns.EMAIL_ADDRESS.matcher(email).matches();
-    }
-
     private void requestFocus(View view) {
         if (view.requestFocus()) {
             getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
         }
     }
-
-    private class MyTextWatcher implements TextWatcher {
-
-        private View view;
-
-        MyTextWatcher(View view) {
-            this.view = view;
-        }
-
-        @Override
-        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-        }
-
-        @Override
-        public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-        }
-
-        @Override
-        public void afterTextChanged(Editable s) {
-            switch (view.getId()) {
-                case R.id.textLoginEmail:
-                    break;
-                case R.id.textLoginPassword:
-                    break;
-            }
-        }
-    }
-
 }
