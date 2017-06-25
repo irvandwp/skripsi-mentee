@@ -149,9 +149,9 @@ public class Order {
         this.status = status;
     }
 
-    public static Order parseJSON(String JSON) {
+    public static Order[] parseJSON(String JSON) {
         Gson gson = new GsonBuilder().create();
-        return gson.fromJson(JSON, Order.class);
+        return gson.fromJson(JSON, Order[].class);
     }
 
     public static RequestBody createJSONRequest(Order order) {

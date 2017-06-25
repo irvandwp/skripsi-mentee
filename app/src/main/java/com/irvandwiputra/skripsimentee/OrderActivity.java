@@ -195,7 +195,7 @@ public class OrderActivity extends AppCompatActivity
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                spinnerCourse.setAdapter(new ArrayAdapter<String>(OrderActivity.this, android.R.layout.simple_spinner_dropdown_item, stringArrayList));
+                                spinnerCourse.setAdapter(new ArrayAdapter<>(OrderActivity.this, android.R.layout.simple_spinner_dropdown_item, stringArrayList));
                             }
                         });
                     }

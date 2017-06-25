@@ -82,7 +82,7 @@ public class HistoryFragment extends Fragment {
                     Log.i(TAG, "onResponse: " + response.code());
                     if (response.isSuccessful()) {
                         Log.i(TAG, "onResponse: " + responseData);
-                        Order order = Order.parseJSON(responseData);
+                        Order[] order = Order.parseJSON(responseData);
                         getActivity().runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
