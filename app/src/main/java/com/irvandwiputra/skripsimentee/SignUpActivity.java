@@ -1,20 +1,23 @@
 package com.irvandwiputra.skripsimentee;
 
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 
 import com.google.gson.Gson;
-import com.irvandwiputra.skripsimentee.Utility.Constant;
 import com.irvandwiputra.skripsimentee.Model.User;
+import com.irvandwiputra.skripsimentee.Utility.Constant;
+import com.irvandwiputra.skripsimentee.Utility.TextWatcher;
 
 import java.io.IOException;
-import java.util.regex.Matcher;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -30,31 +33,45 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
     public static final String TAG = SignUpActivity.class.getSimpleName();
 
     @Bind(R.id.textEmail)
-    EditText textEMail;
-
+    public EditText textEmail;
     @Bind(R.id.textName)
-    EditText textName;
-
+    public EditText textName;
     @Bind(R.id.textAddress)
-    EditText textAddress;
-
+    public EditText textAddress;
     @Bind(R.id.textPassword)
-    EditText textPassword;
-
+    public EditText textPassword;
     @Bind(R.id.textOccupation)
-    EditText textOccupation;
-
+    public EditText textOccupation;
     @Bind(R.id.textPhoneNumber)
-    EditText textPhoneNo;
-
+    public EditText textPhoneNo;
     @Bind(R.id.buttonSubmit)
-    Button buttonSubmit;
+    public Button buttonSubmit;
+    @Bind(R.id.txtEmailLayout)
+    public TextInputLayout txtEmailLayout;
+    @Bind(R.id.txtNameLayout)
+    public TextInputLayout txtNameLayout;
+    @Bind(R.id.txtAddressLayout)
+    public TextInputLayout txtAddressLayout;
+    @Bind(R.id.txtPasswordLayout)
+    public TextInputLayout txtPasswordLayout;
+    @Bind(R.id.txtOccupationLayout)
+    public TextInputLayout txtOccupationLayout;
+    @Bind(R.id.txtPhoneLayout)
+    public TextInputLayout txtPhoneLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
         ButterKnife.bind(this);
+
+        textEmail.addTextChangedListener(new TextWatcher(textEmail));
+        textName.addTextChangedListener(new TextWatcher(textName));
+        textAddress.addTextChangedListener(new TextWatcher(textAddress));
+        textOccupation.addTextChangedListener(new TextWatcher(textOccupation));
+        textPhoneNo.addTextChangedListener(new TextWatcher(textPhoneNo));
+        textPassword.addTextChangedListener(new TextWatcher(textPassword));
+
         buttonSubmit.setOnClickListener(this);
     }
 
@@ -67,39 +84,103 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
         }
     }
 
-    public void validateSignUp() {
-        String email = textEMail.getText().toString().trim();
-        String name = textName.getText().toString().trim();
-        String password = textPassword.getText().toString().trim();
-        String phoneNo = textPhoneNo.getText().toString().trim();
-        String address = textAddress.getText().toString().trim();
-        String occupation = textOccupation.getText().toString().trim();
-        Matcher matcher = Constant.VALID_EMAIL_ADDRESS_REGEX.matcher(email);
-
-        if (email.isEmpty() || name.isEmpty() || password.isEmpty() || phoneNo.isEmpty() || address.isEmpty() || occupation.isEmpty()) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(this)
-                    .setMessage("Please fill out all of the required field")
-                    .setPositiveButton("OK", null);
-            AlertDialog alertDialog = builder.create();
-            alertDialog.show();
-        } else if (!matcher.find()) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(this)
-                    .setMessage("Please enter the correct email address")
-                    .setPositiveButton("OK", null);
-            AlertDialog alertDialog = builder.create();
-            alertDialog.show();
+    private boolean validateEmail() {
+        String email = textEmail.getText().toString().trim();
+        if (email.isEmpty()) {
+            txtEmailLayout.setError("Please enter your email address");
+            requestFocus(textEmail);
+            return false;
+        } else if (!Constant.isValidEmail(email)) {
+            txtEmailLayout.setError("Please enter a valid email address");
+            requestFocus(textEmail);
+            return false;
         } else {
-            SignUp();
+            txtEmailLayout.setErrorEnabled(false);
+        }
+        return true;
+    }
+
+    private boolean validateName() {
+        String name = textName.getText().toString().trim();
+        if (name.isEmpty()) {
+            txtNameLayout.setError("Please enter your name");
+            requestFocus(textName);
+            return false;
+        } else {
+            txtNameLayout.setErrorEnabled(false);
+        }
+        return true;
+    }
+
+    private boolean validatePassword() {
+        String password = textPassword.getText().toString().trim();
+        if (password.isEmpty()) {
+            txtPasswordLayout.setError("Please enter your password");
+            requestFocus(textPassword);
+            return false;
+        } else {
+            txtNameLayout.setErrorEnabled(false);
+        }
+        return true;
+    }
+
+    private boolean validatePhoneNo() {
+        String phoneno = textPhoneNo.getText().toString().trim();
+        if (phoneno.isEmpty()) {
+            txtPhoneLayout.setError("Please enter your phone number");
+            requestFocus(textPhoneNo);
+            return false;
+        } else {
+            txtPhoneLayout.setErrorEnabled(false);
+        }
+        return true;
+    }
+
+    private boolean validateAddress() {
+        String address = textAddress.getText().toString().trim();
+        if (address.isEmpty()) {
+            txtAddressLayout.setError("Please enter your address");
+            requestFocus(textAddress);
+            return false;
+        } else {
+            txtAddressLayout.setErrorEnabled(false);
+        }
+        return true;
+    }
+
+    private boolean validateOccupation() {
+        String occupation = textOccupation.getText().toString().trim();
+        if (occupation.isEmpty()) {
+            txtOccupationLayout.setError("Please enter your occupation");
+            requestFocus(textOccupation);
+            return false;
+        } else {
+            txtOccupationLayout.setErrorEnabled(false);
+        }
+        return true;
+    }
+
+    private void requestFocus(View view) {
+        if (view.requestFocus()) {
+            getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
         }
     }
 
-    public void SignUp() {
-        AlertDialog.Builder builderLoading = new AlertDialog.Builder(this);
-        builderLoading.setMessage("Please wait");
-        final AlertDialog dialogLoading = builderLoading.create();
-        dialogLoading.show();
+    public void validateSignUp() {
+        if (!validateEmail() || !validateName() ||
+                !validatePassword() || !validatePhoneNo() ||
+                !validateAddress() || !validatePhoneNo() ||
+                !validateOccupation())
+            return;
+        SignUp();
+    }
 
-        User user = new User(textEMail.getText().toString().trim(),
+    public void SignUp() {
+        final ProgressDialog progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Loading...");
+        progressDialog.show();
+
+        User user = new User(textEmail.getText().toString().trim(),
                 textName.getText().toString().trim(),
                 textPassword.getText().toString().trim(),
                 textPhoneNo.getText().toString().trim(),
@@ -131,8 +212,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            dialogLoading.hide();
-
+                            progressDialog.hide();
                             AlertDialog.Builder builderSuccess = new AlertDialog.Builder(SignUpActivity.this);
                             builderSuccess.setMessage("Successfully create new account");
                             builderSuccess.setPositiveButton("OK", new DialogInterface.OnClickListener() {

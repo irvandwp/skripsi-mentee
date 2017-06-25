@@ -35,6 +35,18 @@ public class TextWatcher implements android.text.TextWatcher {
                 break;
             case R.id.textDuration:
                 break;
+            case R.id.textEmail:
+                break;
+            case R.id.textName:
+                break;
+            case R.id.textPassword:
+                break;
+            case R.id.textAddress:
+                break;
+            case R.id.textPhoneNumber:
+                break;
+            case R.id.textOccupation:
+                break;
         }
     }
 }

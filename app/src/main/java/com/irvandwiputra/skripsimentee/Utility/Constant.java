@@ -1,8 +1,8 @@
 package com.irvandwiputra.skripsimentee.Utility;
 
 import android.content.Context;
-
-import java.util.regex.Pattern;
+import android.text.TextUtils;
+import android.util.Patterns;
 
 import okhttp3.MediaType;
 
@@ -12,18 +12,15 @@ import okhttp3.MediaType;
 
 public class Constant {
 
-    public static final Pattern VALID_EMAIL_ADDRESS_REGEX =
-            Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
-
     public static final MediaType MEDIA_TYPE_MARKDOWN
             = MediaType.parse("text/x-markdown; charset=utf-8");
 
     public static final String ROLE_MENTOR = "mentor";
     public static final String ROLE_MENTEE = "mentee";
 
-    public static final String TOKEN = "TOKEN";
-    public static final String EMAIL = "EMAIL";
-    public static final String NAME = "NAME";
+    private static final String TOKEN = "TOKEN";
+    private static final String EMAIL = "EMAIL";
+    private static final String NAME = "NAME";
 
     private static final String BASE_URL = "http://192.168.100.3:8888/skripsi/";
     public static final String URL_NEW_USER = BASE_URL + "api/users/new";
@@ -63,5 +60,7 @@ public class Constant {
         tinyDB.putString(NAME, name);
     }
 
-
+    public static boolean isValidEmail(String email) {
+        return !TextUtils.isEmpty(email) && Patterns.EMAIL_ADDRESS.matcher(email).matches();
+    }
 }
