@@ -25,24 +25,17 @@ public class Order {
     private int price;
     private double latitude;
     private double longitude;
+    private String course_name;
 
     public Order() {
     }
 
-    public Order(String token, int id, String order_no, int total_price, int course_id, String order_description, String mentee_id, String mentor_id, String status, int duration, int price, double latitude, double longitude) {
-        this.token = token;
-        this.id = id;
-        this.order_no = order_no;
-        this.total_price = total_price;
-        this.course_id = course_id;
-        this.order_description = order_description;
-        this.mentee_id = mentee_id;
-        this.mentor_id = mentor_id;
-        this.status = status;
-        this.duration = duration;
-        this.price = price;
-        this.latitude = latitude;
-        this.longitude = longitude;
+    public String getCourse_name() {
+        return course_name;
+    }
+
+    public void setCourse_name(String course_name) {
+        this.course_name = course_name;
     }
 
     public String getToken() {
