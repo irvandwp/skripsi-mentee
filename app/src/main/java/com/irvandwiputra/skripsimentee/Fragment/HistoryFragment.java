@@ -4,6 +4,7 @@ package com.irvandwiputra.skripsimentee.Fragment;
 import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -105,8 +106,10 @@ public class HistoryFragment extends Fragment {
                             public void run() {
                                 progressDialog.dismiss();
                                 HistoryAdapter historyAdapter = new HistoryAdapter(orderArrayList, getContext());
+                                RecyclerView.ItemDecoration itemDecoration = new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL);
                                 historyRecyclerView.setAdapter(historyAdapter);
                                 historyRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+                                historyRecyclerView.addItemDecoration(itemDecoration);
                             }
                         });
                     } else {
