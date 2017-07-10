@@ -3,6 +3,7 @@ package com.irvandwiputra.skripsimentee.Fragment;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DividerItemDecoration;
@@ -20,6 +21,7 @@ import android.widget.Toast;
 import com.irvandwiputra.skripsimentee.Model.Order;
 import com.irvandwiputra.skripsimentee.Model.ResponseStatus;
 import com.irvandwiputra.skripsimentee.Model.Token;
+import com.irvandwiputra.skripsimentee.OrderDetailActivity;
 import com.irvandwiputra.skripsimentee.R;
 import com.irvandwiputra.skripsimentee.RecyclerView.HistoryAdapter;
 import com.irvandwiputra.skripsimentee.Utility.Constant;
@@ -168,6 +170,7 @@ public class HistoryFragment extends Fragment {
                         orders = Order.parseJSON(responseData);
                         for (Order order : orders) {
                             Order eachOrder = new Order();
+                            eachOrder.setId(Integer.parseInt(String.valueOf(order.getId())));
                             eachOrder.setOrder_no(order.getOrder_no());
                             eachOrder.setCourse_name(order.getCourse_name());
                             eachOrder.setOrder_description(order.getOrder_description());
@@ -187,7 +190,9 @@ public class HistoryFragment extends Fragment {
                                     @Override
                                     public void onCLick(View view, int position) {
                                         Order order = orderArrayList.get(position);
-                                        Toast.makeText(getContext(), "Selected item id is " + order.getId(), Toast.LENGTH_SHORT).show();
+                                        Intent intent = new Intent(getActivity(), OrderDetailActivity.class);
+                                        intent.putExtra("orderId", order.getId());
+                                        startActivity(intent);
                                     }
 
                                     @Override

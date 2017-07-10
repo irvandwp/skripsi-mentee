@@ -22,13 +22,14 @@ public class Constant {
     private static final String EMAIL = "EMAIL";
     private static final String NAME = "NAME";
 
-    private static final String BASE_URL = "http://192.168.0.102:8888/skripsi/";
+    private static final String BASE_URL = "http://192.168.43.252:8888/skripsi/";
     public static final String URL_NEW_USER = BASE_URL + "api/users/new";
     public static final String URL_LOGIN = BASE_URL + "api/users/login";
     public static final String URL_NEW_ORDER = BASE_URL + "api/orders/new";
     public static final String URL_COURSE = BASE_URL + "api/courses";
     public static final String URL_ORDER = BASE_URL + "api/orders";
     public static final String URL_CURRENT_USER = BASE_URL + "api/users/detail";
+    public static final String URL_ORDER_DETAIL = BASE_URL + "api/orders/detail";
 
     public static final int REQUEST_PERMISSION_REQUEST_CODE = 34;
 

@@ -142,6 +142,11 @@ public class Order {
         this.status = status;
     }
 
+    public static Order parseSingleJSON(String JSON) {
+        Gson gson = new GsonBuilder().create();
+        return gson.fromJson(JSON, Order.class);
+    }
+
     public static Order[] parseJSON(String JSON) {
         Gson gson = new GsonBuilder().create();
         return gson.fromJson(JSON, Order[].class);
