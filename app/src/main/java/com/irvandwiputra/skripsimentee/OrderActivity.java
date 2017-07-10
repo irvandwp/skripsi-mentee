@@ -277,14 +277,13 @@ public class OrderActivity extends AppCompatActivity
     }
 
     public void validateCreateOrder() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this)
+                .setMessage("Please select course")
+                .setPositiveButton("OK", null);
+        AlertDialog alertDialog = builder.create();
         if (!validateDescription() || !validateStartTime() || !validateDuration()) return;
-        if (courseId == 0) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(this)
-                    .setMessage("Please select course")
-                    .setPositiveButton("OK", null);
-            AlertDialog alertDialog = builder.create();
-            alertDialog.show();
-        }
+        if (courseId == 0) alertDialog.show();
+        if (alertDialog.isShowing()) alertDialog.dismiss();
         DoCreateOrder();
     }
 
@@ -329,7 +328,7 @@ public class OrderActivity extends AppCompatActivity
                         @Override
                         public void run() {
                             progressDialog.hide();
-                            AlertDialog.Builder builder = new AlertDialog.Builder(getApplicationContext())
+                            AlertDialog.Builder builder = new AlertDialog.Builder(OrderActivity.this)
                                     .setMessage(responseStatus.getMessage())
                                     .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                                         @Override
