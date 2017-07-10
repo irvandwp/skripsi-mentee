@@ -65,6 +65,7 @@ public class OrderActivity extends AppCompatActivity
     private FusedLocationProviderClient mFusedLocationClient;
     protected Location mLastLocation;
     public GoogleMap googleMap;
+    ResponseStatus responseStatus;
 
     @Bind(R.id.textStartTime)
     public EditText textStartTime;
@@ -322,7 +323,8 @@ public class OrderActivity extends AppCompatActivity
             public void onResponse(Call call, Response response) throws IOException {
                 try {
                     String responseApi = response.body().string();
-                    final ResponseStatus responseStatus = ResponseStatus.parseJSON(responseApi);
+                    Log.i(TAG, "onResponse: " + responseApi);
+                    responseStatus = ResponseStatus.parseJSON(responseApi);
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
