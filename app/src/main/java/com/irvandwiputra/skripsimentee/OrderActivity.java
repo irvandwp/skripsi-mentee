@@ -357,15 +357,19 @@ public class OrderActivity extends AppCompatActivity
         textStartTime.setText(hourOfDay + ":" + minute);
     }
 
+
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        String name = getCourseName(position);
-        for (Course course : courses) {
-            if (course.getName().equals(name)) {
-                courseId = course.getId();
-            } else {
-                courseId = 0;
-            }
+        switch (view.getId()) {
+            case R.id.spinnerCourse:
+                String name = getCourseName(position);
+                Log.i(TAG, "onItemSelected: " + name);
+                for (Course course : courses) {
+                    Log.i(TAG, "onItemSelected: " + course.getName().equals(name));
+                    if (course.getName().equals(name)) courseId = course.getId();
+                    else courseId = 0;
+                }
+                break;
         }
     }
 
