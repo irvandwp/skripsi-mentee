@@ -84,7 +84,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         User user = new User();
         user.setEmail(textLoginEmail.getText().toString().trim());
         user.setPassword(textLoginPassword.getText().toString().trim());
-        user.setRole(Constant.ROLE_MENTEE);
+        user.setRole(Constant.ROLE_MENTOR);
 
         OkHttpClient client = new OkHttpClient();
 
