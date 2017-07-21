@@ -42,7 +42,9 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyC1KhEO3HhyTPf3yV6CYe8dGMZQvBbNFXY" />
 
-        <activity android:name=".OrderDetailActivity"></activity>
+        <activity android:name=".OrderDetailActivity" />
+        <activity android:name=".Feedback" />
+        <activity android:name=".MyRating"></activity>
     </application>
 
 </manifest>
