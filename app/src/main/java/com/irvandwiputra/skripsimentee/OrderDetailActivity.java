@@ -15,19 +15,21 @@ import com.irvandwiputra.skripsimentee.Utility.Constant;
 import java.io.IOException;
 
 import butterknife.Bind;
+import butterknife.ButterKnife;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-public class OrderDetailActivity extends AppCompatActivity {
+public class OrderDetailActivity extends AppCompatActivity implements View.OnClickListener {
 
     public static final String TAG = OrderDetailActivity.class.getSimpleName();
     Order order;
     ResponseStatus responseStatus;
 
-
+    @Bind(R.id.buttonRate)
+    public Button buttonRate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,12 +40,9 @@ public class OrderDetailActivity extends AppCompatActivity {
         String orderId = bundle.getString("orderId");
 
         DoGetOrderDetail(orderId);
-
+        ButterKnife.bind(this);
+        buttonRate.setOnClickListener(this);
     }
-
-
-
-
 
     private void DoGetOrderDetail(String id) {
         OkHttpClient okHttpClient = new OkHttpClient();
@@ -92,5 +91,15 @@ public class OrderDetailActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.buttonRate:
+                Intent intent = new Intent(OrderDetailActivity.this, MainActivity.class);
+                startActivity(intent);
+                break;
+        }
     }
 }
