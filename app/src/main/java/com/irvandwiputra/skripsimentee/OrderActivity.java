@@ -333,7 +333,7 @@ public class OrderActivity extends AppCompatActivity
                                     .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
-                                            Intent intent = new Intent(OrderActivity.this, MainActivity.class);
+                                            Intent intent = new Intent(OrderActivity.this, OrderDetailActivity.class);
                                             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                                             startActivity(intent);
                                         }

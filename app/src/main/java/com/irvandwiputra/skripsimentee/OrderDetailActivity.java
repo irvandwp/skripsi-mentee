@@ -1,7 +1,11 @@
 package com.irvandwiputra.skripsimentee;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 
 import com.irvandwiputra.skripsimentee.Model.Order;
 import com.irvandwiputra.skripsimentee.Model.ResponseStatus;
@@ -10,6 +14,7 @@ import com.irvandwiputra.skripsimentee.Utility.Constant;
 
 import java.io.IOException;
 
+import butterknife.Bind;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.OkHttpClient;
@@ -22,6 +27,8 @@ public class OrderDetailActivity extends AppCompatActivity {
     Order order;
     ResponseStatus responseStatus;
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,7 +38,12 @@ public class OrderDetailActivity extends AppCompatActivity {
         String orderId = bundle.getString("orderId");
 
         DoGetOrderDetail(orderId);
+
     }
+
+
+
+
 
     private void DoGetOrderDetail(String id) {
         OkHttpClient okHttpClient = new OkHttpClient();
