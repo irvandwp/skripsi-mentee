@@ -104,6 +104,15 @@
             android:layout_toRightOf="@+id/editText2"
             android:layout_toEndOf="@+id/editText2" />
 
+        <Button
+            android:id="@+id/button4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/button2"
+            android:layout_centerHorizontal="true"
+            android:text="Rate"
+            android:textColor="@android:color/holo_orange_light" />
+
     </RelativeLayout>
 
 </android.support.constraint.ConstraintLayout>
